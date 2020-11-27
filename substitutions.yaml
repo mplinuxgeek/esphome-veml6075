@@ -1,0 +1,7 @@
+wifi_ssid: ""
+wifi_password: ""
+hotspot_password: ""
+password: ""
+mqtt_broker: ""
+mqtt_user: ""
+mqtt_pass: ""

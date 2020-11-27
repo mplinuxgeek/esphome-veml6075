@@ -1,0 +1,66 @@
+substitutions:
+  devicename: "uv_sensor"
+  upper_devicename: "UV_Sensor"
+  <<: !include substitutions.yaml
+  
+esphome:
+  name: ${devicename}
+  platform: ESP8266
+  board: d1_mini
+  includes:
+    - veml6075_custom_sensor.h
+  libraries:
+    - SPI
+    - "https://github.com/adafruit/Adafruit_VEML6075"
+    - "https://github.com/adafruit/Adafruit_BusIO"
+    
+wifi:
+  ssid: ${wifi_ssid}
+  password: ${wifi_password}
+  ap:
+    ssid: ${devicename}
+    password: ${hotspot_password}
+
+web_server:
+  port: 80
+  
+mqtt:
+  broker: ${mqtt_broker}
+  username: ${mqtt_user}
+  password: ${mqtt_pass}
+  
+logger:
+#  level: INFO
+
+# Enable Home Assistant API
+#api:
+#  password: ${password}
+
+ota:
+  password: ${password}
+
+status_led:
+  pin: 
+    number: GPIO2
+    inverted: True
+    
+i2c:
+  - sda: D2
+    scl: D1
+    scan: True
+
+sensor:
+  - platform: custom
+    lambda: |-
+      auto veml6075 = new VEML6075CustomSensor();
+      App.register_component(veml6075);
+      return {veml6075->uva_sensor, veml6075->uvb_sensor};
+    sensors:
+    - name: "${devicename}_UVA"
+      id: uva
+      unit_of_measurement: "mW/cm²"
+      accuracy_decimals: 0
+    - name: "${devicename}_UVB"
+      id: uvb
+      unit_of_measurement: "mW/cm²"
+      accuracy_decimals: 0
